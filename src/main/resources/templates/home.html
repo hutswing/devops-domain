@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <div class="jumbotron"><h1>도메인,SSL인증서 정보</h1>
+        <p class="lead">도메인</p>
+        <p>
+            <a class="btn btn-lg btn-secondary" href="/members/new">도메인 등록</a>
+            <a class="btn btn-lg btn-secondary" href="/members">도메인 목록</a></p>
+        <p class="lead">SSL인증서</p>
+        <p>
+            <a class="btn btn-lg btn-dark" href="/items/new">SSL인증서 등록</a>
+            <a class="btn btn-lg btn-dark" href="/items">SSL인증서 목록</a></p>
+    </div>
+    <div th:replace="fragments/footer :: footer"/>
+</div> <!-- /container -->
+</body>
+</html>
