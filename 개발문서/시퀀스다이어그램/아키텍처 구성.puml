@@ -1,0 +1,47 @@
+@startuml Basic Usage - AWS IoT Rules Engine
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v11.1/dist
+!includeurl AWSPuml/AWSCommon.puml
+!includeurl AWSPuml/InternetOfThings/IoTRule.puml
+!includeurl AWSPuml/Analytics/KinesisDataStreams.puml
+!includeurl AWSPuml/ApplicationIntegration/SimpleQueueService.puml
+!includeurl AWSPuml/Storage/SimpleStorageService.puml
+!includeurl AWSPuml/General/Users.puml
+!include AWSPuml/Compute/EC2.puml
+!include AWSPuml/Compute/EC2Instance.puml
+
+node "EC2 Instance(AWS)" {
+    '### SimpleStorageService(s3, "S3", "외부메타", "")
+    '### EC2Instance(ec2, "EC2", "")
+
+    package "devops팀 개인서버" {
+        archimate #Technology "grafana(docker)" as grafana <<technology-device>>
+        archimate #Technology "prometheus(docker)" as prometheus <<technology-device>>
+        archimate #Technology "applicaion(docker)" as applicaion <<technology-device>>
+    }
+}
+
+node "Instance Computer(OCI)" {
+
+   package "gitlab-runner" {
+        archimate #Technology "gitlab-runner" as runner <<technology-device>>
+   }
+
+   package "gitlab" {
+        archimate #Technology "gitlab" as gitlab <<technology-device>>
+    }
+
+}
+
+node "개발환경(local)" {
+    package "IntelliJ" {
+        archimate #Technology "domain" as local <<technology-device>>
+    }
+}
+
+local =right=> gitlab #blue : 1. git push
+gitlab => runner #blue : 2. gitlab CI/CD\npipeline build
+runner =up=> applicaion #blue : 3. gitlab CI/CD pipeline deploy
+applicaion -left-> prometheus : spring actuator\n정보수집
+prometheus -left-> grafana : spring actuator\n정보 대시보드
+
+@enduml

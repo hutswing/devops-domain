@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title Domain 만료일자 확인 배치
+
+skinparam responseMessageBelowArrow true
+
+participant DomainScheduler as Scheduler
+participant DomainService as Service
+participant DomainRepository as Repository
+database DB
+participant WhoisAPI
+participant ApacheWebCommon
+
+Scheduler -> Service : Scheduler 등록 시간마다 \n syncDomainExpireDate() 호출
+Service -> Repository : findAll() : 도메인 목록 조회
+Repository -> DB : findAll()
+DB --> Repository : 도메인 목록 반환
+Repository --> Service : 도메인 목록 반환
+
+loop 도메인 목록
+    alt .kr or 한글 도메인
+        Service -> WhoisAPI : http://whois.kisa.or.kr/openapi/whois.jsp
+        WhoisAPI --> Service : Domain 정보 반환
+    else 그밖에 도메인
+        Service -> ApacheWebCommon : whois.query()
+        ApacheWebCommon --> Service : Domain 정보 반환
+    end
+    Service -> Repository : update()
+    Repository -> DB : update() : 도메인 변경정보 저장
+end
+@enduml
